@@ -1,7 +1,9 @@
 var express = require('express');
 var app = express();
+var cors = require('cors')
 var fs = require("fs");
 
+app.use(cors());
 
 app.get('/', function (req, res) {
    res
