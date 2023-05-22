@@ -4,7 +4,8 @@
   "description": "This is the FIUBA Planner API dedicated to generate academic plans based on Genetic Algorithms",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "npm test",
+    "start": "node app/server.js"
   },
   "repository": {
     "type": "git",
