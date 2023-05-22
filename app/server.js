@@ -2,6 +2,14 @@ var express = require('express');
 var app = express();
 var fs = require("fs");
 
+
+app.get('/', function (req, res) {
+   res
+    .status(200)
+    .send('Server is running')
+    .end();
+});
+
 app.get('/listUsers', function (req, res) {
    fs.readFile( __dirname + "/" + "users.json", 'utf8', function (err, data) {
       console.log( data );
