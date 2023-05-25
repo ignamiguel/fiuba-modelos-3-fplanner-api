@@ -4,6 +4,10 @@ var cors = require('cors')
 var fs = require("fs");
 
 app.use(cors());
+app.use(express.json()) 
+
+
+const studentsFileName = "students.json";
 
 app.get('/', function (req, res) {
    res
@@ -12,41 +16,44 @@ app.get('/', function (req, res) {
     .end();
 });
 
-app.get('/listUsers', function (req, res) {
-   fs.readFile( __dirname + "/" + "users.json", 'utf8', function (err, data) {
+
+//***  Students  ***//
+app.get('/students', function (req, res) {
+   fs.readFile( __dirname + "/" + studentsFileName, 'utf8', function (err, data) {
       console.log( data );
+      res.setHeader('content-type', 'application/json');
       res.end( data );
    });
 });
 
-var user = {
-   "user4" : {
-      "name" : "mohit",
-      "password" : "password4",
-      "profession" : "teacher",
-      "id": 4
-   }
-};
-
-app.post('/addUser', function (req, res) {
-   // First read existing users.
-   fs.readFile( __dirname + "/" + "users.json", 'utf8', function (err, data) {
-      data = JSON.parse( data );
-      data["user4"] = user["user4"];
-      console.log( data );
-      res.end( JSON.stringify(data));
-   });
-});
-
-app.get('/:id', function (req, res) {
-   // First read existing users.
-   fs.readFile( __dirname + "/" + "users.json", 'utf8', function (err, data) {
-      var users = JSON.parse( data );
-      var user = users["user" + req.params.id] 
-      console.log( user );
-      res.end( JSON.stringify(user));
+app.get('/students/:id', function (req, res) {
+   fs.readFile( __dirname + "/" + studentsFileName, 'utf8', function (err, data) {
+      var students = JSON.parse( data );
+      var student = students[req.params.id];
+      console.log( student );
+      res.setHeader('content-type', 'application/json');
+      res.end( JSON.stringify(student));
    });
 })
+
+app.post('/students', function (req, res) {
+   fs.readFile( __dirname + "/" + studentsFileName, 'utf8', function (err, data) {
+      const students = JSON.parse( data );
+
+      const newStudent = req.body;
+      console.log( newStudent );
+      if( newStudent && newStudent.id) {
+         students[newStudent.id] = newStudent;
+         console.log( students );
+         res.setHeader('content-type', 'application/json');
+         res.status(201);
+         res.end( JSON.stringify(students));
+      } else {
+         res.status(400);
+         res.end("invalid student");
+      }
+   });
+});
 
 var PORT = process.env.PORT || 3000;
 var HOST = process.env.HOST || "::";
