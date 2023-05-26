@@ -8,6 +8,7 @@ app.use(express.json())
 
 
 const studentsFileName = "students.json";
+const degreesFileName = "degrees.json";
 
 app.get('/', function (req, res) {
    res
@@ -52,6 +53,16 @@ app.post('/students', function (req, res) {
          res.status(400);
          res.end("invalid student");
       }
+   });
+});
+
+
+//***  Degrees  ***//
+app.get('/degrees', function (req, res) {
+   fs.readFile( __dirname + "/" + degreesFileName, 'utf8', function (err, data) {
+      console.log( data );
+      res.setHeader('content-type', 'application/json');
+      res.end( data );
    });
 });
 

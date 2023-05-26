@@ -1,0 +1,59 @@
+[
+    {
+        "id": 1,
+        "name": "Ingeniería Informática",
+        "subjects": [ 
+            "Álgebra",
+            "Análisis Matemático",
+            "Organización del Computador",
+            "Modelos y Optimización I",
+            "Algoritmos y Programación I",
+            "Base de Datos",
+            "Técnicas de Diseño",
+            "Administración de Proyectos"
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Lic. en Análisis de Sistemas",
+        "subjects": [ 
+            "Álgebra",
+            "Análisis Matemático",
+            "Organización del Computador",
+            "Modelos y Optimización I",
+            "Algoritmos y Programación I",
+            "Base de Datos",
+            "Técnicas de Diseño",
+            "Administración de Proyectos"
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Ingeniería Industrial",
+        "subjects": [ 
+            "Álgebra",
+            "Análisis Matemático",
+            "Organización del Computador",
+            "Modelos y Optimización I",
+            "Algoritmos y Programación I",
+            "Base de Datos",
+            "Técnicas de Diseño",
+            "Administración de Proyectos"
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Ingeniería Electrónica",
+        "subjects": [ 
+            "Álgebra",
+            "Análisis Matemático",
+            "Organización del Computador",
+            "Modelos y Optimización I",
+            "Algoritmos y Programación I",
+            "Base de Datos",
+            "Técnicas de Diseño",
+            "Administración de Proyectos"
+        ]
+    }
+]
+ 
