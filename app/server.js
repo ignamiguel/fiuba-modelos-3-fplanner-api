@@ -66,6 +66,16 @@ app.get('/degrees', function (req, res) {
    });
 });
 
+app.get('/degrees/:id', function (req, res) {
+   fs.readFile( __dirname + "/" + degreesFileName, 'utf8', function (err, data) {
+      const degrees = JSON.parse( data );
+      const degree = degrees.find(element => element.id == req.params.id);
+      console.log( degree );
+      res.setHeader('content-type', 'application/json');
+      res.end( JSON.stringify(degree));
+   });
+})
+
 var PORT = process.env.PORT || 3000;
 var HOST = process.env.HOST || "::";
 
