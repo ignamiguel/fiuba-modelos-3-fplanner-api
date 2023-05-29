@@ -9,6 +9,8 @@ app.use(express.json())
 
 const studentsFileName = "students.json";
 const degreesFileName = "degrees.json";
+const subjectFileName = "subjects.json";
+const professorshipFileName = "professorship.json";
 
 app.get('/', function (req, res) {
    res
@@ -74,7 +76,56 @@ app.get('/degrees/:id', function (req, res) {
       res.setHeader('content-type', 'application/json');
       res.end( JSON.stringify(degree));
    });
-})
+});
+
+//***  Subjects  ***//
+app.get('/subjects', function (req, res) {
+   fs.readFile( __dirname + "/" + subjectFileName, 'utf8', function (err, data) {
+      console.log( data );
+      res.setHeader('content-type', 'application/json');
+      res.end( data );
+   });
+});
+
+app.get('/subjects/:id', function (req, res) {
+   fs.readFile( __dirname + "/" + subjectFileName, 'utf8', function (err, data) {
+      const subjects = JSON.parse( data );
+      const subject = subjects.find(element => element.id == req.params.id);
+      console.log( subject );
+      res.setHeader('content-type', 'application/json');
+      res.end( JSON.stringify(subject));
+   });
+});
+
+//***  Professorship  ***//
+app.get('/professorships', function (req, res) {
+   fs.readFile( __dirname + "/" + professorshipFileName, 'utf8', function (err, data) {
+      console.log( data );
+      const professorshipDic = JSON.parse( data );
+      const professorshipList = []; 
+      Object.keys(professorshipDic).map(function(k) {
+         const element = professorshipDic[k];
+         console.log("element", JSON.stringify(element));
+         for (let index = 0; index < element.length; index++) {
+            professorshipList.push(element[index]);
+         }
+     });
+      res.setHeader('content-type', 'application/json');
+      res.end( JSON.stringify(professorshipList) );
+   });
+});
+
+app.get('/professorships/:id', function (req, res) {
+   fs.readFile( __dirname + "/" + professorshipFileName, 'utf8', function (err, data) {
+      const professorshipDic = JSON.parse( data );
+      const professorshipList = professorshipDic[req.params.id];
+      const p = professorshipList.find(element => element.id == req.params.id);
+      console.log( p );
+      res.setHeader('content-type', 'application/json');
+      res.end( JSON.stringify(p));
+   });
+});
+
 
 var PORT = process.env.PORT || 3000;
 var HOST = process.env.HOST || "::";

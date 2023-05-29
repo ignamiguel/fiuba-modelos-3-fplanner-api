@@ -1,0 +1,50 @@
+[
+  {
+    "id": 0,
+    "code": "61.08",
+    "name": "Álgebra",
+    "credits": 6
+  },
+  {
+    "id": 1,
+    "code": "61.03",
+    "name": "Análisis Matemático",
+    "credits": 6
+  },
+  {
+    "id": 2,
+    "code": "75.06",
+    "name": "Organización del Computador",
+    "credits": 6
+  },
+  {
+    "id": 3,
+    "code": "71.14",
+    "name": "Modelos y Optimización I",
+    "credits": 6
+  },
+  {
+    "id": 4,
+    "code": "75.07",
+    "name": "Algoritmos y Programación I",
+    "credits": 6
+  },
+  {
+    "id": 5,
+    "code": "75.15",
+    "name": "Base de Datos",
+    "credits": 6
+  },
+  {
+    "id": 6,
+    "code": "75.10",
+    "name": "Técnicas de Diseño",
+    "credits": 6
+  },
+  {
+    "id": 7,
+    "code": "71.16",
+    "name": "Administración de Proyectos",
+    "credits": 6
+  }
+]
