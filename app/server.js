@@ -99,6 +99,12 @@ app.get('/subjects/:id', function (req, res) {
 
 //***  Professorship  ***//
 app.get('/professorships', function (req, res) {
+   const opt =  { 'enconding': 'utf8'};
+   const subjectData = fs.readFileSync(__dirname + "/" + subjectFileName, opt);
+   const subjectList = JSON.parse(subjectData);
+
+   console.log('subjectList', JSON.stringify(subjectList));
+
    fs.readFile( __dirname + "/" + professorshipFileName, 'utf8', function (err, data) {
       console.log( data );
       const professorshipDic = JSON.parse( data );
@@ -106,10 +112,15 @@ app.get('/professorships', function (req, res) {
       Object.keys(professorshipDic).map(function(k) {
          const element = professorshipDic[k];
          console.log("element", JSON.stringify(element));
+         
          for (let index = 0; index < element.length; index++) {
-            professorshipList.push(element[index]);
+            const e = element[index];
+            e.subject = subjectList.find(item => item.id == e.subject).name;
+            professorshipList.push(e);
          }
      });
+
+
       res.setHeader('content-type', 'application/json');
       res.end( JSON.stringify(professorshipList) );
    });
@@ -127,7 +138,7 @@ app.get('/professorships/:id', function (req, res) {
 });
 
 
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 3001;
 var HOST = process.env.HOST || "::";
 
 console.log("************* host", HOST);
