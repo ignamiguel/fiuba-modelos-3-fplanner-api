@@ -12,13 +12,17 @@ const degreesFileName = "degrees.json";
 const subjectFileName = "subjects.json";
 const professorshipFileName = "professorship.json";
 
+
+const opt =  { 'enconding': 'utf8'};
+const subjectData = fs.readFileSync(__dirname + "/" + subjectFileName, opt);
+const subjectList = JSON.parse(subjectData);
+
 app.get('/', function (req, res) {
    res
     .status(200)
     .send('Server is running')
     .end();
 });
-
 
 //***  Students  ***//
 app.get('/students', function (req, res) {
@@ -99,10 +103,6 @@ app.get('/subjects/:id', function (req, res) {
 
 //***  Professorship  ***//
 app.get('/professorships', function (req, res) {
-   const opt =  { 'enconding': 'utf8'};
-   const subjectData = fs.readFileSync(__dirname + "/" + subjectFileName, opt);
-   const subjectList = JSON.parse(subjectData);
-
    console.log('subjectList', JSON.stringify(subjectList));
 
    fs.readFile( __dirname + "/" + professorshipFileName, 'utf8', function (err, data) {
@@ -131,7 +131,10 @@ app.get('/professorships/:id', function (req, res) {
       const professorshipDic = JSON.parse( data );
       const professorshipList = professorshipDic[req.params.id];
       const p = professorshipList.find(element => element.id == req.params.id);
-      console.log( p );
+
+      p.subject =  subjectList.find(item => item.id == p.subject).name;
+
+      console.log( JSON.stringify(p) );
       res.setHeader('content-type', 'application/json');
       res.end( JSON.stringify(p));
    });
