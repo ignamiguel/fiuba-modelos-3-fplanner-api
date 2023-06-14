@@ -15,7 +15,7 @@ const professorshipFileName = "professorship.json";
 
 const opt =  { 'enconding': 'utf8'};
 const subjectData = fs.readFileSync(__dirname + "/" + subjectFileName, opt);
-const subjectList = JSON.parse(subjectData);
+const subjectArray = JSON.parse(subjectData);
 
 const studentData = fs.readFileSync(__dirname + "/" + studentsFileName, opt);
 const studentDictionary = JSON.parse(studentData);
@@ -141,26 +141,27 @@ app.post('/degrees', function (req, res) {
 
 //***  Subjects  ***//
 app.get('/subjects', function (req, res) {
-   fs.readFile( __dirname + "/" + subjectFileName, 'utf8', function (err, data) {
-      console.log( data );
-      res.setHeader('content-type', 'application/json');
-      res.end( data );
-   });
+   console.log( subjectArray );
+   res.setHeader('content-type', 'application/json');
+   res.end( JSON.stringify(subjectArray) );
 });
 
 app.get('/subjects/:id', function (req, res) {
-   fs.readFile( __dirname + "/" + subjectFileName, 'utf8', function (err, data) {
-      const subjects = JSON.parse( data );
-      const subject = subjects.find(element => element.id == req.params.id);
-      console.log( subject );
-      res.setHeader('content-type', 'application/json');
-      res.end( JSON.stringify(subject));
-   });
+   const subject = subjectArray.find(element => element.id == req.params.id);
+   console.log( subject );
+   if (subject === undefined) {
+      res.status(404);
+      res.end( `Subject "${req.params.id}" not found`);
+      return;
+   }
+   
+   res.setHeader('content-type', 'application/json');
+   res.end( JSON.stringify(subject));
 });
 
 //***  Professorship  ***//
 app.get('/professorships', function (req, res) {
-   console.log('subjectList', JSON.stringify(subjectList));
+   console.log('subjectList', JSON.stringify(subjectArray));
 
    fs.readFile( __dirname + "/" + professorshipFileName, 'utf8', function (err, data) {
       console.log( data );
@@ -172,7 +173,7 @@ app.get('/professorships', function (req, res) {
          
          for (let index = 0; index < element.length; index++) {
             const e = element[index];
-            e.subject = subjectList.find(item => item.id == e.subject).name;
+            e.subject = subjectArray.find(item => item.id == e.subject).name;
             professorshipList.push(e);
          }
      });
@@ -189,7 +190,7 @@ app.get('/professorships/:id', function (req, res) {
       const professorshipList = professorshipDic[req.params.id];
       const p = professorshipList.find(element => element.id == req.params.id);
 
-      p.subject =  subjectList.find(item => item.id == p.subject).name;
+      p.subject =  subjectArray.find(item => item.id == p.subject).name;
 
       console.log( JSON.stringify(p) );
       res.setHeader('content-type', 'application/json');
