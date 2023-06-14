@@ -47,22 +47,49 @@ app.get('/students/:id', function (req, res) {
 })
 
 app.post('/students', function (req, res) {
-   fs.readFile( __dirname + "/" + studentsFileName, 'utf8', function (err, data) {
-      const students = JSON.parse( data );
+   const newStudent = req.body;
+   console.log( "Creating a new student", newStudent );
+   
+   if( !newStudent || !newStudent.id) {
+      res.status(400);
+      res.end("Invalid student");
+      return;
+   } 
 
-      const newStudent = req.body;
-      console.log( newStudent );
-      if( newStudent && newStudent.id) {
-         students[newStudent.id] = newStudent;
-         console.log( students );
-         res.setHeader('content-type', 'application/json');
-         res.status(201);
-         res.end( JSON.stringify(students));
-      } else {
-         res.status(400);
-         res.end("invalid student");
-      }
-   });
+   if( studentDictionary[newStudent.id] !== undefined ) {
+      res.status(409);
+      res.end(`Student "${newStudent.id}" already exist`);
+      return;
+   }
+   
+   studentDictionary[newStudent.id] = newStudent;
+   console.log( studentDictionary );
+   res.setHeader('content-type', 'application/json');
+   res.status(201);
+   res.end( JSON.stringify(newStudent));
+});
+
+app.put('/students/:id', function (req, res) {
+   const aStudent = req.body;
+   console.log( "Updating a student", aStudent );
+   
+   if( !aStudent || !aStudent.id) {
+      res.status(400);
+      res.end("Invalid student");
+      return;
+   } 
+
+   if( studentDictionary[aStudent.id] === undefined ) {
+      res.status(400);
+      res.end(`Student "${aStudent.id}" does not exist`);
+      return;
+   }
+   
+   studentDictionary[aStudent.id] = aStudent;
+   console.log( studentDictionary );
+   res.setHeader('content-type', 'application/json');
+   res.status(200);
+   res.end( JSON.stringify(aStudent));
 });
 
 
