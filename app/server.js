@@ -20,6 +20,9 @@ const subjectList = JSON.parse(subjectData);
 const studentData = fs.readFileSync(__dirname + "/" + studentsFileName, opt);
 const studentDictionary = JSON.parse(studentData);
 
+const degreeData = fs.readFileSync(__dirname + "/" + degreesFileName, opt);
+const degreeArray = JSON.parse(degreeData);
+
 app.get('/', function (req, res) {
    res
     .status(200)
@@ -92,24 +95,48 @@ app.put('/students/:id', function (req, res) {
    res.end( JSON.stringify(aStudent));
 });
 
-
 //***  Degrees  ***//
 app.get('/degrees', function (req, res) {
-   fs.readFile( __dirname + "/" + degreesFileName, 'utf8', function (err, data) {
-      console.log( data );
-      res.setHeader('content-type', 'application/json');
-      res.end( data );
-   });
+   console.log(degreeArray);
+   res.setHeader('content-type', 'application/json');
+   res.end( JSON.stringify(degreeArray) );
 });
 
 app.get('/degrees/:id', function (req, res) {
-   fs.readFile( __dirname + "/" + degreesFileName, 'utf8', function (err, data) {
-      const degrees = JSON.parse( data );
-      const degree = degrees.find(element => element.id == req.params.id);
+      const degree = degreeArray.find(element => element.id == req.params.id);
+      if (!degree) {
+         res.status(404);
+         res.end(`Degree "${req.params.id}" not found`);
+         return;
+      }
       console.log( degree );
       res.setHeader('content-type', 'application/json');
       res.end( JSON.stringify(degree));
-   });
+});
+
+app.post('/degrees', function (req, res) {
+   const newDegree = req.body;
+   console.log( "Creating a new degree", newDegree );
+   
+   if( !newDegree || !newDegree.id) {
+      res.status(400);
+      res.end("Invalid degree");
+      return;
+   }
+
+   const degree = degreeArray.find(element => element.id == newDegree.id);
+
+   if( degree !== undefined ) {
+      res.status(409);
+      res.end(`Degree "${newDegree.id}" already exist`);
+      return;
+   }
+   
+   degreeArray[newDegree.id] = newDegree;
+   console.log( degreeArray );
+   res.setHeader('content-type', 'application/json');
+   res.status(201);
+   res.end( JSON.stringify(newDegree));
 });
 
 //***  Subjects  ***//
