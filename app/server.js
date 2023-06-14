@@ -17,6 +17,9 @@ const opt =  { 'enconding': 'utf8'};
 const subjectData = fs.readFileSync(__dirname + "/" + subjectFileName, opt);
 const subjectList = JSON.parse(subjectData);
 
+const studentData = fs.readFileSync(__dirname + "/" + studentsFileName, opt);
+const studentDictionary = JSON.parse(studentData);
+
 app.get('/', function (req, res) {
    res
     .status(200)
@@ -26,21 +29,21 @@ app.get('/', function (req, res) {
 
 //***  Students  ***//
 app.get('/students', function (req, res) {
-   fs.readFile( __dirname + "/" + studentsFileName, 'utf8', function (err, data) {
-      console.log( data );
+      console.log( studentDictionary );
       res.setHeader('content-type', 'application/json');
-      res.end( data );
-   });
+      res.end( JSON.stringify(studentDictionary) );
 });
 
 app.get('/students/:id', function (req, res) {
-   fs.readFile( __dirname + "/" + studentsFileName, 'utf8', function (err, data) {
-      var students = JSON.parse( data );
-      var student = students[req.params.id];
-      console.log( student );
-      res.setHeader('content-type', 'application/json');
-      res.end( JSON.stringify(student));
-   });
+      const student = studentDictionary[req.params.id];
+      if(student) {
+         console.log( student );
+         res.setHeader('content-type', 'application/json');
+         res.end( JSON.stringify(student));
+      } else {
+         res.status(404);
+         res.end(`Student "${req.params.id}" not found`);
+      }
 })
 
 app.post('/students', function (req, res) {
