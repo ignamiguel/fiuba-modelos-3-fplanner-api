@@ -157,7 +157,7 @@ app.post('/degrees', function (req, res) {
       return;
    }
    
-   degreeArray[newDegree.id] = newDegree;
+   degreeArray.push(newDegree);
    console.log( degreeArray );
    res.setHeader('content-type', 'application/json');
    res.status(201);
