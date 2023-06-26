@@ -23,6 +23,9 @@ const studentDictionary = JSON.parse(studentData);
 const degreeData = fs.readFileSync(__dirname + "/" + degreesFileName, opt);
 const degreeArray = JSON.parse(degreeData);
 
+const professorshipData = fs.readFileSync(__dirname + "/" + professorshipFileName, opt);
+const professorshipDictionary = JSON.parse(professorshipData);
+
 app.get('/', function (req, res) {
    res
     .status(200)
@@ -30,7 +33,7 @@ app.get('/', function (req, res) {
     .end();
 });
 
-//***  Students  ***//
+//***  Students CRUD ***//
 app.get('/students', function (req, res) {
       console.log( studentDictionary );
       res.setHeader('content-type', 'application/json');
@@ -38,15 +41,16 @@ app.get('/students', function (req, res) {
 });
 
 app.get('/students/:id', function (req, res) {
-      const student = studentDictionary[req.params.id];
-      if(student) {
-         console.log( student );
-         res.setHeader('content-type', 'application/json');
-         res.end( JSON.stringify(student));
-      } else {
-         res.status(404);
-         res.end(`Student "${req.params.id}" not found`);
-      }
+   const studentId = req.params.id;
+   const student = studentDictionary[studentId];
+   if(student) {
+      console.log( student );
+      res.setHeader('content-type', 'application/json');
+      res.end( JSON.stringify(student));
+   } else {
+      res.status(404);
+      res.end(`Student "${studentId}" not found`);
+   }
 })
 
 app.post('/students', function (req, res) {
@@ -93,6 +97,27 @@ app.put('/students/:id', function (req, res) {
    res.setHeader('content-type', 'application/json');
    res.status(200);
    res.end( JSON.stringify(aStudent));
+});
+
+app.delete('/students/:id', function (req, res) {
+   const studentIdForDeletion = req.params.id;
+   console.log( "Deleting a student - Id", studentIdForDeletion );
+   
+   const aStudent = studentDictionary[studentIdForDeletion];
+   if(aStudent) {
+
+      delete studentDictionary[studentIdForDeletion];
+      // for (let index = 0; index < array.length; index++) {
+      //    const student = array[index];
+      //    if (student.id === studentIdForDeletion)
+      //    array.splice(i, 1);
+      // }
+      res.status(204);
+      res.end(`Student "${studentIdForDeletion}" deleted`);
+   } else {
+      res.status(404);
+      res.end(`Student "${studentIdForDeletion}" not found`);
+   }
 });
 
 //***  Degrees  ***//
@@ -160,44 +185,79 @@ app.get('/subjects/:id', function (req, res) {
 });
 
 //***  Professorship  ***//
-app.get('/professorships', function (req, res) {
-   console.log('subjectList', JSON.stringify(subjectArray));
+app.get('/professorships', function (req, res) {  
+   const professorshipArray = convertProfessroshipToArray();
 
-   fs.readFile( __dirname + "/" + professorshipFileName, 'utf8', function (err, data) {
-      console.log( data );
-      const professorshipDic = JSON.parse( data );
-      const professorshipList = []; 
-      Object.keys(professorshipDic).map(function(k) {
-         const element = professorshipDic[k];
-         console.log("element", JSON.stringify(element));
-         
-         for (let index = 0; index < element.length; index++) {
-            const e = element[index];
-            e.subject = subjectArray.find(item => item.id == e.subject).name;
-            professorshipList.push(e);
-         }
-     });
-
-
-      res.setHeader('content-type', 'application/json');
-      res.end( JSON.stringify(professorshipList) );
-   });
+   res.setHeader('content-type', 'application/json');
+   res.end( JSON.stringify(professorshipArray) );
 });
 
-app.get('/professorships/:id', function (req, res) {
-   fs.readFile( __dirname + "/" + professorshipFileName, 'utf8', function (err, data) {
-      const professorshipDic = JSON.parse( data );
-      const professorshipList = professorshipDic[req.params.id];
-      const p = professorshipList.find(element => element.id == req.params.id);
+app.get('/professorships/:id', function (req, res) {   
 
-      p.subject =  subjectArray.find(item => item.id == p.subject).name;
+   const professorshipArray = convertProfessroshipToArray();
 
-      console.log( JSON.stringify(p) );
-      res.setHeader('content-type', 'application/json');
-      res.end( JSON.stringify(p));
-   });
+   const p = professorshipArray.find(element => element.id == req.params.id);
+   if(p === undefined) {
+      res.status(404);
+      res.end( `Professorship "${req.params.id}" not found`);
+      return;
+   }
+
+   const subject = subjectArray.find(item => item.id == p.subjectId);
+   if (subject) {
+      p.subject = subject.name;
+   }
+
+   console.log( JSON.stringify(p) );
+   res.setHeader('content-type', 'application/json');
+   res.end( JSON.stringify(p));
 });
 
+app.post('/professorships/', function (req, res) {   
+   const newProfessorship = req.body;
+   console.log( "Creating a new professorship", newProfessorship );
+   
+   if( !newProfessorship || !newProfessorship.id) {
+      res.status(400);
+      res.end("Invalid professorship");
+      return;
+   }
+
+   const professorshipArray = convertProfessroshipToArray();
+
+   const existingProfessorship = professorshipArray.find(element => element.id == newProfessorship.id);
+
+   if( existingProfessorship !== undefined ) {
+      res.status(409);
+      res.end(`Professorship "${newProfessorship.id}" already exist`);
+      return;
+   }
+
+   // Es un ID válido
+   
+   if (!newProfessorship.subjectId) {
+      res.status(400);
+      res.end(`Invalid subjectId "${newProfessorship.subjectId}"`);
+      return;
+   }
+   const subject = subjectArray.find(element=> element.id === newProfessorship.subjectId);
+   console.log("Subject Found", JSON.stringify(subject));
+
+   if (!newProfessorship.shiftId || !(newProfessorship.shiftId === 1 || newProfessorship.shiftId === 2)) {
+      res.status(400);
+      res.end(`Invalid shiftId "${newProfessorship.shiftId}"`);
+      return;
+   }
+
+   const pArray = professorshipDictionary[newProfessorship.subjectId];
+   if(pArray) {
+     pArray.push(newProfessorship);
+     console.log( professorshipDictionary );
+      res.setHeader('content-type', 'application/json');
+      res.status(201);
+      res.end( JSON.stringify(newProfessorship));
+   }
+});
 
 var PORT = process.env.PORT || 3001;
 var HOST = process.env.HOST || "::";
@@ -214,3 +274,20 @@ var server = app.listen(PORT, function () {
 
    console.log("App listening at http://%s:%s", host, port)
 });
+function convertProfessroshipToArray() {
+   const professorshipArray = [];
+   Object.keys(professorshipDictionary).map(function (k) {
+      const element = professorshipDictionary[k];
+      for (let index = 0; index < element.length; index++) {
+         const e = element[index];
+
+         const subjectObj = subjectArray.find(item => item.id == e.subjectId);
+         if (subjectObj) {
+            e.subject = subjectObj.name;
+         }
+         professorshipArray.push(e);
+      }
+   });
+   return professorshipArray;
+}
+
