@@ -12,7 +12,7 @@
             "Técnicas de Diseño",
             "Administración de Proyectos"
         ],
-        "subjectIds": [ 0, 1, 2, 3 , 4, 5, 6, 7]
+        "subjectIds": [ 8, 1, 2, 3 , 4, 5, 6, 7]
     },
     {
         "id": 2,
@@ -27,7 +27,7 @@
             "Técnicas de Diseño",
             "Administración de Proyectos"
         ],
-        "subjectIds": [ 0, 1, 2, 3 , 4, 5, 6, 7]
+        "subjectIds": [ 8, 1, 2, 3 , 4, 5, 6, 7]
     },
     {
         "id": 3,
@@ -42,7 +42,7 @@
             "Técnicas de Diseño",
             "Administración de Proyectos"
         ],
-        "subjectIds": [ 0, 1, 2, 3 , 4, 5, 6, 7]
+        "subjectIds": [ 8, 1, 2, 3 , 4, 5, 6, 7]
     },
     {
         "id": 4,
@@ -57,7 +57,7 @@
             "Técnicas de Diseño",
             "Administración de Proyectos"
         ],
-        "subjectIds": [ 0, 1, 2, 3 , 4, 5, 6, 7]
+        "subjectIds": [ 8, 1, 2, 3 , 4, 5, 6, 7]
     }
 ]
  
